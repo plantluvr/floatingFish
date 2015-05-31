@@ -1,41 +1,66 @@
-PImage window;
-PImage plant1;
-PImage plant2;
-PImage plant3;
+Plant[] plants;
 
-long last_time;
+class Plant {
+  PImage art;
+  float x = 0;
+  float x_velocity = 0; // pixels per second
+  float delay_for = 0; 
+
+  Plant(String name) {
+    art = loadImage(name);
+  }
+
+  void draw() {
+    if (delay_for > 0) delay_for -= delta_time;
+    else {
+      image(art, x, height - art.height);
+
+      x += x_velocity * delta_time;
+
+      if (x > width || x < -art.width)
+        reset();
+    }
+  }
+
+  void reset() {
+    x = -art.width + 1;
+    x_velocity = random(100, 300);
+    delay_for = random(0.5, 5);
+  }
+}
+
+long time;
 float delta_time;
 
 void setup() {
   size(1680, 1050, P2D);
-  
-  last_time = System.nanoTime();
-  
-  plant1 = loadImage("plant_01.png");
-  plant2 = loadImage("plant_02.png");
-  plant3 = loadImage("plant_03.png");
-  //window = l
-  
-  frameRate(60);
-}
 
-int scrollX = 0;
+  plants = new Plant[] {
+    new Plant("plant_02.png"), 
+    new Plant("floral_01.png"), 
+    new Plant("plant_01.png"), 
+    new Plant("floral_02.png"), 
+    new Plant("plant_03.png"), 
+    new Plant("floral_03.png"), 
+    new Plant("plant_04.png"),
+  };
+
+  for (Plant plant : plants)
+    plant.reset();
+
+  time = System.nanoTime();
+}
 
 void draw() {
   // timing code
-  long time = System.nanoTime();
-  long delta_time_ns = time - last_time;
-  last_time = time;
-  delta_time = delta_time_ns / 1e9;
+  long current_time = System.nanoTime();
+  delta_time = (current_time - time) / 1e9;
+  time = current_time;
 
   background(#DF694B);
-  
-  image(plant1, scrollX, height - plant1.height);
-    image(plant2, scrollX, height - plant1.height);
-      image(plant3, scrollX, height - plant1.height);
-  
-  scrollX += 10;
-  
-  if (scrollX > width)
-  scrollX = 0;
+
+  for (Plant plant : plants) {
+    plant.draw();
+  }
 }
+
