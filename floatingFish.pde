@@ -1,3 +1,4 @@
+PImage moon;
 Plant[] plants;
 
 class Plant {
@@ -29,11 +30,14 @@ class Plant {
   }
 }
 
-long time;
+long start_time_ns, time_ns;
+float time;
 float delta_time;
 
 void setup() {
-  size(1680, 1050, P2D);
+  size(1680, 1050, P3D);
+
+  moon = loadImage("moon.png");
 
   plants = new Plant[] {
     new Plant("plant_02.png"), 
@@ -48,16 +52,22 @@ void setup() {
   for (Plant plant : plants)
     plant.reset();
 
-  time = System.nanoTime();
+  start_time_ns = time_ns = System.nanoTime();
 }
 
 void draw() {
   // timing code
-  long current_time = System.nanoTime();
-  delta_time = (current_time - time) / 1e9;
-  time = current_time;
+  long current_time_ns = System.nanoTime();
+  delta_time = (current_time_ns - time_ns) / 1e9;
+  time_ns = current_time_ns;
+  time = time_ns / 1e9;
 
   background(#DF694B);
+  
+  float beats = time * 2;
+  tint(255, abs((beats - (int)beats) * 510 - 255));
+  image(moon, 50, 50);
+  tint(255);
 
   for (Plant plant : plants) {
     plant.draw();
