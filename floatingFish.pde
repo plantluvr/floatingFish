@@ -24,7 +24,7 @@ class Plant {
   }
 
   void reset() {
-    x = -art.width + 1;
+    x = -art.width;
     x_velocity = random(100, 300);
     delay_for = random(0.5, 5);
   }
@@ -50,7 +50,11 @@ void setup() {
   };
 
   for (Plant plant : plants)
+  {
     plant.reset();
+    plant.x = random(-plant.art.width, width);
+    plant.delay_for = 0;
+  }
 
   start_time_ns = time_ns = System.nanoTime();
 }
