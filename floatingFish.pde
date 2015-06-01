@@ -14,7 +14,7 @@ class Plant {
   void draw() {
     if (delay_for > 0) delay_for -= delta_time;
     else {
-      image(art, x, height - art.height);
+      image(art, (int)x, height - art.height);
 
       x += x_velocity * delta_time;
 
