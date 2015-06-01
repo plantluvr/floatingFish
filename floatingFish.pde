@@ -69,7 +69,7 @@ void draw() {
   long current_time_ns = System.nanoTime();
   delta_time = (current_time_ns - time_ns) / 1e9;
   time_ns = current_time_ns;
-  time = time_ns / 1e9;
+  time = (time_ns - start_time_ns) / 1e9;
 
   background(#DF694B);
   
