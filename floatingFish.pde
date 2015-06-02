@@ -1,3 +1,15 @@
+PImage portal;
+float portal_x, portal_y;
+float portal_x_velocity;
+
+PImage fish;
+float fish_x, fish_y;
+float fish_x_velocity;
+boolean fish_visible;
+
+PImage portal_exit;
+float portal_exit_x, portal_exit_y;
+
 PImage moon;
 Plant[] plants;
 
@@ -6,6 +18,7 @@ class Plant {
   float x = 0;
   float x_velocity = 0; // pixels per second
   float delay_for = 0; 
+  float angle = 0;
 
   Plant(String name) {
     art = loadImage(name);
@@ -14,7 +27,11 @@ class Plant {
   void draw() {
     if (delay_for > 0) delay_for -= delta_time;
     else {
-      image(art, (int)x, height - art.height);
+      pushMatrix();
+      translate(x + art.width / 2, height);
+      rotate(radians(angle));
+      image(art, -art.width / 2, -art.height);
+      popMatrix();
 
       x += x_velocity * delta_time;
 
@@ -41,6 +58,20 @@ float delta_time;
 
 void setup() {
   size(1680, 1050, P3D);
+
+  portal = loadImage("portal_a.png");
+  portal_x = 40;
+  portal_y = 400;
+  portal_x_velocity = -500;
+
+  fish = loadImage("fish.png");
+  fish_x = 450;
+  fish_y = 400;
+  fish_x_velocity = 0;
+
+  portal_exit = loadImage("portal_b.png");
+  portal_exit_x = portal_x + portal.width + fish.width;
+  portal_exit_y = 400;
 
   moon = loadImage("moon.png");
 
@@ -71,8 +102,53 @@ void draw() {
   time_ns = current_time_ns;
   time = (time_ns - start_time_ns) / 1e9;
 
-  background(#DF694B);
-  
+  color building = #DF694B;
+  background(building);
+
+  image(portal, (int)portal_x, portal_y);
+  image(portal_exit, (int)portal_exit_x, portal_exit_y);
+
+  if (fish_visible)
+  {
+    image(fish, (int)fish_x, fish_y);
+
+    noStroke();
+    fill(building);
+
+    if (portal_x < portal_exit_x) 
+    {
+      rect((int)portal_x + portal.width, 0, portal_exit_x - portal_x - portal_exit.width, height);
+    } else
+    {
+      rect(0, 0, portal_exit_x, height);
+      rect(portal_x + portal.width, 0, width - portal_x, height);
+    }
+  }
+
+  portal_x += portal_x_velocity * delta_time;
+  portal_exit_x += portal_x_velocity * delta_time;
+  fish_x += fish_x_velocity * delta_time;
+
+  if (fish_x > portal_x + portal.width) {
+    fish_visible = false;
+    fish_y = portal_exit_y + portal_exit.height / 2 - fish.height / 2;
+  }
+
+  if (fish_x + fish.width >= portal_exit_x)
+    fish_visible = true;
+
+  if (portal_exit_x < width - fish.width - portal.width && portal_x < -portal.width * 2)
+  {
+    portal_x = width + random(50, 550);
+    portal_y = fish_y + fish.height / 2 - portal.height / 2;
+  }
+
+  if (portal_x < width - fish.width - portal.width && portal_exit_x < -portal_exit.width * 2)
+  {
+    portal_exit_x = width + random(50, 550);
+    portal_exit_y = 50 + (int)random(5) * 100;
+  }
+
   float beats = time * 2;
   tint(255, abs((beats - (int)beats) * 510 - 255));
   image(moon, 50, 50);
