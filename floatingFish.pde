@@ -25,11 +25,11 @@ class Plant {
 
   void reset() {
     if (random(1) < 0.03) {
-      x = width;
-      x_velocity = -(500 + random(100, 300));
-    } else {
       x = -art.width;
-      x_velocity = random(100, 300);
+      x_velocity = (500 + random(100, 300));
+    } else {
+      x = width;
+      x_velocity = -random(100, 300);
     }
     delay_for = random(0.5, 5);
   }
