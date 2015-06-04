@@ -15,13 +15,23 @@ Plant[] plants;
 
 class Plant {
   PImage art;
+  PImage art_main;
+  PImage art_alt;
+  float alt_chance = 0.5;
   float x = 0;
   float x_velocity = 0; // pixels per second
   float delay_for = 0; 
   float angle = 0;
 
   Plant(String name) {
-    art = loadImage(name);
+    art = art_main = loadImage(name);
+    art_alt = null;
+    alt_chance = 0.00;
+  }
+
+  Plant(String name, String alt_name) {
+    art = art_main = loadImage(name);
+    art_alt = loadImage(alt_name);
   }
 
   void draw() {
@@ -41,6 +51,11 @@ class Plant {
   }
 
   void reset() {
+    
+    if (random(1) < alt_chance) art = art_alt; 
+    else art = art_main;
+    
+    
     if (random(1) < 0.03) {
       x = -art.width;
       x_velocity = (500 + random(100, 300));
@@ -49,6 +64,7 @@ class Plant {
       x_velocity = -random(100, 300);
     }
     delay_for = random(0.5, 5);
+    
   }
 }
 
@@ -82,7 +98,7 @@ void setup() {
     new Plant("floral_02.png"), 
     new Plant("plant_03.png"), 
     new Plant("floral_03.png"), 
-    new Plant("plant_04.png"),
+    new Plant("plant_04.png", "plantmp_04.png"),
   };
 
   for (Plant plant : plants)
