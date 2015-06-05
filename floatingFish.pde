@@ -2,10 +2,11 @@ PImage portal;
 float portal_x, portal_y;
 float portal_x_velocity;
 
-PImage fish;
+PImage fish, real_fish, robot_fish;
 float fish_x, fish_y;
 float fish_x_velocity;
 boolean fish_visible;
+float robot_fish_chance = 0.25;
 
 PImage portal_exit;
 float portal_exit_x, portal_exit_y;
@@ -73,14 +74,17 @@ float time;
 float delta_time;
 
 void setup() {
-  size(1680, 1050, P3D);
+  //size(1680, 1050, P3D);
+  size(1280, 1024, P3D);
 
   portal = loadImage("portal_a.png");
   portal_x = 40;
   portal_y = 400;
   portal_x_velocity = -500;
 
-  fish = loadImage("fish.png");
+  real_fish = loadImage("fish.png");
+  robot_fish = loadImage("robotfish.png");
+  fish = real_fish;
   fish_x = 450;
   fish_y = 400;
   fish_x_velocity = 0;
@@ -148,6 +152,14 @@ void draw() {
   if (fish_x > portal_x + portal.width) {
     fish_visible = false;
     fish_y = portal_exit_y + portal_exit.height / 2 - fish.height / 2;
+    
+    if (random(1) < robot_fish_chance) {
+      fish = robot_fish;
+    }
+    else {
+      fish = real_fish;
+    }
+
   }
 
   if (fish_x + fish.width >= portal_exit_x)
